@@ -62,27 +62,26 @@ void Menu(string filename, int menuOption){
   {
   	case 1:
       cout << "will need to print out file to user in view mode only!!";
-    break;
+      break;
   	case 2:
       cout << "Delete an entry. This might be tricky but according to Dr.G we can fill it up with spaces instead of deleting everything and having to shift everyhting up or down";
-    break;
+      break;
   	case 3:
       cout << "Adding an entry should not be to hard. We would have to add it to a new file and after a certain count have the program merge and sort the file with the original database";
-    break;
+      break;
   	case 4:
       cout << "Modify an entry...I have no clue how to go about it";
-    break;
+      break;
   	case 5:
       cout << "Creating a new database shoud be easy. A few questions..we will want to have a count for the number of entries in the file, also sort the file as we go??";
-    break;
-  	case 6:
-      cout << main();
-    break;
+      break;
+    case 6:
+      cout << "Bye Now!\n";
+      break;
 
   	default:
       cout << "You didn't enter a valid option, please try again";
-      main();
-    break;
+      break;
   }//ends switch
 }//ends Menu function
 
@@ -94,8 +93,9 @@ int main()
 
     void Menu(string file, int menuOption);
 
-    cout<<"HELLO! Please enter the number of your choice\n"
-        << "(1) Open Database (2) Close Database\n";
+    cout <<"HELLO! Please enter the number of your choice\n"
+         << "(1) Open Database (2) Close Database\n";
+
     cin >> openDatabase;
 
     if(openDatabase == 1)
@@ -127,7 +127,7 @@ int main()
 
     if(openDatabase == 2)
     {
-      cout<<"Goodbye!";
+      cout << "Goodbye!";
       exit(1);
     }
 
