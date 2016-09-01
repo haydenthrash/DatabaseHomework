@@ -67,7 +67,8 @@ bool binarySearch (ifstream &Din, const string Id, int &Experience, string &Marr
 }
 
 void Menu(string filename, int menuOption){
-  ifstream Infile(filename.c_str());
+  ifstream Infile;
+  Infile.open(filename.c_str());
 
   switch (menuOption)
   {
