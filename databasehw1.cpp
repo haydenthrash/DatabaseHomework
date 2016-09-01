@@ -4,15 +4,25 @@
 #include <string>
 #include <stdlib.h>
 #include <fstream>
+#include <cstdlib>
 using namespace std;
 
 const int RECORD_SIZE = 71;
 const int NUM_RECORDS = 4110;
-const string FILENAME = "input.txt";
+const string FILENAME = "temp.txt"; //changed, will be used when adding entry to temp file so that it can later be merged with orginial database
+
+void NewEntry();
+void NewDatabase();
+
+//starting values for fields in file, taken from sample code given by Dr. Gauch
+     string ID="ID";
+     int Experience=-1;
+     string Married="unknown";
+     float Wages=-1.0;
+     string Industry="Industry";
 
 /*Get record number n-th (from 1 to NUM_RECORDS) */
-bool GetRecord(ifstream &Din, const int RecordNum,
-               string &Id, int &Experience, string &Married, float &Wage, string &Industry)
+bool GetRecord(ifstream &Din, const int RecordNum, string &Id, int &Experience, string &Married, float &Wage, string &Industry)
 {
     bool Success = true;
     string line;
@@ -31,8 +41,7 @@ bool GetRecord(ifstream &Din, const int RecordNum,
 }
 
 /*Binary Search record id */
-bool binarySearch (ifstream &Din, const string Id,
-                   int &Experience, string &Married, float &Wage, string &Industry)
+bool binarySearch (ifstream &Din, const string Id, int &Experience, string &Married, float &Wage, string &Industry)
 {
    int Low = 0;
    int High = NUM_RECORDS;
@@ -58,24 +67,36 @@ bool binarySearch (ifstream &Din, const string Id,
 }
 
 void Menu(string filename, int menuOption){
+  ifstream Infile(filename.c_str());
+
   switch (menuOption)
   {
-  	case 1:
-      cout << "will need to print out file to user in view mode only!!";
+  	case 1://Displays an entry based on user choice
+   	 cout <<"Please enter ID number to search for\n";
+ 	 cin >> ID;
+	 
+           if (binarySearch(Infile, ID , Experience, Married, Wages, Industry))
+   	       {
+              cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl;
+   	       }
+           else
+      	      cout << "Record for ID " << ID << " was not found.\n\n";
+
       break;
   	case 2:
       cout << "Delete an entry. This might be tricky but according to Dr.G we can fill it up with spaces instead of deleting everything and having to shift everyhting up or down";
       break;
-  	case 3:
-      cout << "Adding an entry should not be to hard. We would have to add it to a new file and after a certain count have the program merge and sort the file with the original database";
+  	case 3://Adds entry to database
+           NewEntry();
       break;
   	case 4:
       cout << "Modify an entry...I have no clue how to go about it";
       break;
-  	case 5:
-      cout << "Creating a new database shoud be easy. A few questions..we will want to have a count for the number of entries in the file, also sort the file as we go??";
+  	case 5://creates a new database
+         NewDatabase();
       break;
     case 6:
+      Infile.close();
       cout << "Bye Now!\n";
       break;
 
@@ -85,8 +106,57 @@ void Menu(string filename, int menuOption){
   }//ends switch
 }//ends Menu function
 
+void NewEntry(){//still have to do error checking but we can leave it for the very end as "touch-ups"
+  ofstream outfile;
+  outfile.open(FILENAME.c_str()); 
+  int entries;
+
+  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << '\t' << "Wage" << '\t' << "Industry" << std::endl; //IT'S NOT CREATING NEW LINES IN THE FILE!!
+  cout << "how many entries do you wish to add?\n"; cin >> entries;
+  
+  for (int j=0; j< entries; j++){
+  cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
+  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
+  cout <<"Maried? yes or no:\n"; cin >> Married;
+  cout <<"Enter Wage:\n"; cin >> Wages;
+  cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
+
+  outfile << ID << '\t' << Experience << '\t' << Married << '\t' << Wages << '\t' << Industry << endl;
+  }//ends for loop
+  
+  outfile.close();
+
+
+}//ends NewEntry
+
+void NewDatabase(){//still have to do error checking but we can leave it for the very end as "touch-ups"
+
+ string newdatafile;
+ int entries;
+
+ cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
+ ofstream outfile;
+ outfile.open(newdatafile.c_str());
+
+  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << '\t' << "Wage" << '\t' << "Industry" << std::endl;
+  cout << "how many entries do you wish to add?\n"; cin >> entries;
+  
+  for (int j=0; j< entries; j++){
+  cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
+  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
+  cout <<"Maried? yes or no:\n"; cin >> Married;
+  cout <<"Enter Wage:\n"; cin >> Wages;
+  cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
+
+  outfile << ID << '\t' << Experience << '\t' << Married << '\t' << Wages << '\t' << Industry << endl;
+  }//ends for loop
+  
+  outfile.close();
+
+}//ends NewDatabase
+
 int main()
-{
+{   
     int  openDatabase = 0, menuOption = 0;
     string file;
     bool shouldContinue = true;
@@ -101,13 +171,13 @@ int main()
     if(openDatabase == 1)
     {
       cout << "Please enter the name of the database you wish to open\n";
-      cin >> file; //will have to make file an fstream not a string in order to open it
+      cin >> file;
 
       //while loop keeps menu up until they choose to quit
        while(shouldContinue == true)
        {
          cout << "Please enter the number of your choice\n"
-              << "(1) View database\n"
+              << "(1) Search database\n"
               << "(2) Delete entry\n"
               << "(3) Add entry\n"
               << "(4) Modify an entry\n"
@@ -130,7 +200,6 @@ int main()
       cout << "Goodbye!";
       exit(1);
     }
-
-    //cout << "this is testing the exit code in option 2" << endl;
+    
     return 0;
 }//ends main
