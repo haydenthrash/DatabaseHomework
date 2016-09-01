@@ -13,6 +13,7 @@ const string FILENAME = "temp.txt"; //changed, will be used when adding entry to
 
 void NewEntry();
 void NewDatabase();
+int main();
 
 //starting values for fields in file, taken from sample code given by Dr. Gauch
      string ID="ID";
@@ -97,13 +98,10 @@ void Menu(string filename, int menuOption){
       cout << "Modify an entry...I have no clue how to go about it";
       break;
 
-  	case 5://creates a new database
-         NewDatabase();
-      break;
-
-    case 6:
-      Infile.close();
-      cout << "Bye Now!\n";
+  	case 5://return to main where user can quit program of do other stuff
+         Infile.close();
+	 main();
+         
       break;
 
   	default:
@@ -170,7 +168,7 @@ int main()
     void Menu(string file, int menuOption);
 
     cout <<"HELLO! Please enter the number of your choice\n"
-         << "(1) Open Database (2) Close Database\n";
+         << "(1) Open Database\n(2) Create New Database\n(3) Close Database\n";
 
     cin >> openDatabase;
 
@@ -187,12 +185,11 @@ int main()
               << "(2) Delete entry\n"
               << "(3) Add entry\n"
               << "(4) Modify an entry\n"
-              << "(5) Create new Database\n"
-              << "(6) Quit\n";
+              << "(5) Quit\n";
 
          cin >> menuOption;
 
-         if(menuOption == 6)
+         if(menuOption == 5)
          {
            shouldContinue = false;
          }
@@ -203,7 +200,13 @@ int main()
 
     if(openDatabase == 2)
     {
-      cout << "Goodbye!";
+      NewDatabase();
+      main();//goes back to main menu where user can quit entire program or do other stuff
+    }
+
+    if(openDatabase == 3)
+    {
+      cout << "Bye Now!\n";
       exit(1);
     }
     
