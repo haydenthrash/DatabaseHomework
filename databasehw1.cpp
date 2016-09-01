@@ -84,18 +84,23 @@ void Menu(string filename, int menuOption){
       	      cout << "Record for ID " << ID << " was not found.\n\n";
 
       break;
+
   	case 2:
       cout << "Delete an entry. This might be tricky but according to Dr.G we can fill it up with spaces instead of deleting everything and having to shift everyhting up or down";
       break;
+
   	case 3://Adds entry to database
            NewEntry();
       break;
+
   	case 4:
       cout << "Modify an entry...I have no clue how to go about it";
       break;
+
   	case 5://creates a new database
          NewDatabase();
       break;
+
     case 6:
       Infile.close();
       cout << "Bye Now!\n";
@@ -112,7 +117,7 @@ void NewEntry(){//still have to do error checking but we can leave it for the ve
   outfile.open(FILENAME.c_str()); 
   int entries;
 
-  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << '\t' << "Wage" << '\t' << "Industry" << std::endl; //IT'S NOT CREATING NEW LINES IN THE FILE!!
+  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl; 
   cout << "how many entries do you wish to add?\n"; cin >> entries;
   
   for (int j=0; j< entries; j++){
@@ -122,7 +127,7 @@ void NewEntry(){//still have to do error checking but we can leave it for the ve
   cout <<"Enter Wage:\n"; cin >> Wages;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << '\t' << Married << '\t' << Wages << '\t' << Industry << endl;
+  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wages << "\t\t" << Industry << endl;
   }//ends for loop
   
   outfile.close();
@@ -139,7 +144,7 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
  ofstream outfile;
  outfile.open(newdatafile.c_str());
 
-  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << '\t' << "Wage" << '\t' << "Industry" << std::endl;
+  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl; 
   cout << "how many entries do you wish to add?\n"; cin >> entries;
   
   for (int j=0; j< entries; j++){
@@ -149,7 +154,7 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
   cout <<"Enter Wage:\n"; cin >> Wages;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << '\t' << Married << '\t' << Wages << '\t' << Industry << endl;
+  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wages << "\t\t" << Industry << endl;
   }//ends for loop
   
   outfile.close();
