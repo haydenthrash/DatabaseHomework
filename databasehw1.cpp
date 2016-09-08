@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <cstdlib>
+#include <sstream>
 using namespace std;
 
 const int RECORD_SIZE = 71;
@@ -26,6 +27,7 @@ string Married = "unknown";
 double Wages = -1.0;
 string Industry = "Industry";
 
+int RecordNum = 0;
 int IDColumnLength = 0;
 int ExperienceColumnLength = 0;
 int MarriedColumnLength = 0;
@@ -33,7 +35,7 @@ int WagesColumnLength = 0;
 int IndustryColumnLength = 0;
 
 /*Get record number n-th (from 1 to NUM_RECORDS) */
-bool GetRecord(fstream &Din, const int RecordNum, string &Id, int &Experience, string &Married, double &Wage, string &Industry)
+bool GetRecord(fstream &Din,  string &Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
     bool Success = true;
     string line;
@@ -67,7 +69,10 @@ bool binarySearch (fstream &Din, const string Id, int &Experience, string &Marri
       Din >> MiddleId >> Experience >> Married >> Wage >> Industry;
 
       if (MiddleId == Id)
+			{
+				 RecordNum = Middle;
          Found = true;
+			}
       else if (MiddleId < Id)
          Low = Middle + 1;
       else
@@ -92,9 +97,8 @@ void ModifyDatabase(fstream &Infile, string filename)
 	if (binarySearch(Infile, ID , Experience, Married, Wages, Industry))
 	{
 		int fieldChoice = 0;
-		string updatedExperience = " ";
-		int columnLength = 0;
 		int updatedLength = 0;
+		stringstream wagesStream;
 
 		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl
 				<< "What field would you like to modify?\n"
@@ -108,33 +112,58 @@ void ModifyDatabase(fstream &Infile, string filename)
 		switch (fieldChoice)
 		{
 			case 1:
-
-				// cout << "What integer are you changing Experience to?\n";
-				// cin >> updatedExperience;
-				// updatedLength = updatedExperience.length();
-				// Infile.seekg(RECORD_SIZE * -1, ios::cur);
-				// Infile >> ID >> Experience;
-				// columnLength = Experience.length();
-				// while(Infile.peek() == WHITE_SPACE)
-				// {
-				// 	columnLength++;
-				// 	Infile.seekg(1, ios::cur);
-				// }
-
-
-
+				cout << "What integer are you changing Experience to?\n";
+				cin >> Experience;
+				updatedLength = to_string(Experience).length();
+				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+				Infile.seekp(IDColumnLength, ios::cur);
+				Infile << Experience;
+				for(int i = 0; i < (ExperienceColumnLength - updatedLength); i++)
+				{
+					Infile << WHITE_SPACE;
+				}
 			break;
 
 			case 2:
-				cout << "You gonna change Married\n";
+				cout << "What are you changing Married to?\n";
+				cin >> Married;
+				updatedLength = Married.length();
+				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+				Infile.seekp(IDColumnLength + ExperienceColumnLength, ios::cur);
+				Infile << Married;
+				for(int i = 0; i < (MarriedColumnLength - updatedLength); i++)
+				{
+					Infile << WHITE_SPACE;
+				}
 			break;
 
 			case 3:
-				cout << "You gonna change Wage\n";
+				cout << "What float are you changing Wage to?\n";
+				cin >> Wages;
+				wagesStream << fixed << setprecision(9) << Wages;
+				updatedLength = wagesStream.str().length();
+				cout << updatedLength << endl;
+				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);
+				Infile << wagesStream.str();
+				for(int i = 0; i < (WagesColumnLength - updatedLength); i++)
+				{
+					Infile << WHITE_SPACE;
+				}
 			break;
 
 			case 4:
-				cout << "You gonna change Industry\n";
+				cout << "What are you changing Industry to?\n";
+				cin >> Industry;
+				updatedLength = Industry.length();
+				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WagesColumnLength, ios::cur);
+				Infile << Industry;
+				for(int i = 0; i < (IndustryColumnLength - updatedLength); i++)
+				{
+					Infile << WHITE_SPACE;
+				}
+				Infile << NEW_LINE;
 			break;
 
 			default:
@@ -269,7 +298,7 @@ void InitializeColumnLengths(fstream &Infile)
 	string IndustryTitle;
 	Infile >> IndustryTitle;
 	IndustryColumnLength = IndustryTitle.length();
-	while(Infile.peek() == WHITE_SPACE || Infile.peek() == NEW_LINE)
+	while(Infile.peek() == WHITE_SPACE)
 	{
 		IndustryColumnLength++;
 		Infile.seekg(1, ios::cur);
@@ -291,7 +320,6 @@ int main()
 
     if(openDatabase == 1)
     {
-			bool isOpened = true;
       cout << "Please enter the name of the database you wish to open\n";
       cin >> filename;
 			fstream Infile(filename.c_str(), ios::in | ios::out);
