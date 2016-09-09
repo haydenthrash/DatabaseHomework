@@ -1,4 +1,4 @@
-//created 8/29/16 by Sandy J. Becerra
+//created 8/29/16 by Sandy J. Becerra and Hayden Thrasher
 
 #include <iostream>
 #include <iomanip>
@@ -92,8 +92,9 @@ void SearchDatabaseById(fstream &Infile)
 		 cout << "Record for ID " << ID << " was not found.\n\n";
 }
 
-void ModifyDatabase(fstream &Infile, string filename)
+void ModifyDatabase(fstream &Infile)
 {
+	// Change so that if modification goes past column length, it chops off the end
 	if (binarySearch(Infile, ID , Experience, Married, Wages, Industry))
 	{
 		int fieldChoice = 0;
@@ -167,12 +168,52 @@ void ModifyDatabase(fstream &Infile, string filename)
 			break;
 
 			default:
-				cout << "Maaaaaaaaan, why can't you pick the right choice?\n";
+				cout << "You did not select a valid choice.\n";
 			break;
 		}
 	}
 	else
+	{
 		 cout << "Record for ID " << ID << " was not found.\n\n";
+	}
+}
+
+void DeleteEntry(fstream &Infile)
+{
+	string confirmDelete = " ";
+
+	if(binarySearch(Infile, ID , Experience, Married, Wages, Industry))
+	{
+		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl
+				<< "Are you sure you want to delete record " << ID << "?\n"
+				<< "Y/N\n";
+		cin >> confirmDelete;
+
+		if(confirmDelete == "Y" || confirmDelete =="y")
+		{
+			cout << " . . . \n";
+			Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+			Infile << "-1";
+			for(int i = 0; i  < (RECORD_SIZE - 3); i++)
+			{
+				Infile << WHITE_SPACE;
+			}
+
+			Infile << NEW_LINE;
+
+			cout << "Okay then, you've deleted it forever\n";
+		}
+
+		else
+		{
+			cout << "Record " << ID << " was not deleted\n";
+		}
+	}
+
+	else
+	{
+		cout << "Record for ID " << ID << " was not found.\n\n";
+	}
 }
 
 void Menu(fstream &Infile, string filename, int menuOption){
@@ -185,7 +226,9 @@ void Menu(fstream &Infile, string filename, int menuOption){
 		 break;
 
   	case 2:
-      	cout << "Delete an entry. This might be tricky but according to Dr.G we can fill it up with spaces instead of deleting everything and having to shift everyhting up or down";
+      	cout << "Please enter ID number to delete\n";
+				cin >> ID;
+				DeleteEntry(Infile);
       break;
 
   	case 3://Adds entry to database
@@ -195,7 +238,7 @@ void Menu(fstream &Infile, string filename, int menuOption){
   	case 4:
       	cout << "Please enter ID number to modify\n";
 				cin >> ID;
-				ModifyDatabase(Infile, filename);
+				ModifyDatabase(Infile);
       break;
 
   	case 5://return to main where user can quit program of do other stuff
