@@ -15,7 +15,7 @@ const string FILENAME = "temp.txt"; //changed, will be used when adding entry to
 const char WHITE_SPACE(32);
 const char NEW_LINE(10);
 
-int DATOS; //used to get # records from a file. This value will then be used to do binary search 
+int DATOS; //used to get # records from a file. This value will then be used to do binary search
 string filename; //moved it up here to use without having to pass it around to unnecessary methods
 
 int RecordNum = 0;
@@ -99,14 +99,13 @@ void ModifyDatabase(fstream &Infile, string ID)
 	string Married = " ";
 	double Wage = 0.0;
 	string Industry = " ";
-	string experienceString = " ";
-	string wageString = " ";
 
 	if (binarySearch(Infile, ID , Experience, Married, Wage, Industry))
 	{
 		int fieldChoice = 0;
 		int updatedLength = 0;
 		stringstream wageStream;
+		stringstream experienceStream;
 
 		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wage << ", " << Industry << endl << endl
 				<< "What field would you like to modify?\n"
@@ -122,15 +121,15 @@ void ModifyDatabase(fstream &Infile, string ID)
 			case 1:
 				cout << "What integer are you changing Experience to?\n";
 				cin >> Experience;
-				experienceString = to_string(Experience);
-				updatedLength = experienceString.length();
+				experienceStream << Experience;
+				updatedLength = experienceStream.str().length();
 				if (updatedLength >= ExperienceColumnLength)
 				{
-					experienceString.resize(ExperienceColumnLength - 1);
+					experienceStream.str().resize(ExperienceColumnLength - 1);
 				}
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 				Infile.seekp(IDColumnLength, ios::cur);
-				Infile << experienceString;
+				Infile << experienceStream.str();
 				for(int i = 0; i < (ExperienceColumnLength - updatedLength); i++)
 				{
 					Infile << WHITE_SPACE;
@@ -159,7 +158,6 @@ void ModifyDatabase(fstream &Infile, string ID)
 				cin >> Wage;
 				wageStream << fixed << setprecision(9) << Wage;
 				updatedLength = wageStream.str().length();
-				cout << updatedLength << endl;
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);
 				Infile << wageStream.str();
@@ -246,6 +244,7 @@ void CreateReport(fstream &Infile, string ID)
 	string Married = " ";
 	double Wage = 0.0;
 	string Industry = " ";
+	stringstream wageStream;
 
 
 	cout << "Id\tExperience\tMarried\tWage\t\tIndustry\n";
@@ -254,12 +253,16 @@ void CreateReport(fstream &Infile, string ID)
 		RecordNum = i + 1;
 		if(GetRecord(Infile, ID, Experience, Married, Wage, Industry))
 		{
-			  if(to_string(Wage).length() <= 8)
-			  {
-				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t\t" << Industry << "\n";
-			   }
+			wageStream << fixed << setprecision(9) << Wage;
+
+			if(wageStream.str().length() <= 8)
+			{
+				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << wageStream.str() << "\t\t" << Industry << "\n";
+			}
 			else
-				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t" << Industry << "\n";
+				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << wageStream.str() << "\t" << Industry << "\n";
+
+			wageStream.str("");
 		}
 	}
 }
@@ -309,7 +312,7 @@ void Menu(fstream &Infile, int menuOption){
 void NewEntry(){
 
   ofstream outfile;
-  outfile.open(FILENAME.c_str()); //opens the temp file to add new entries in 
+  outfile.open(FILENAME.c_str()); //opens the temp file to add new entries in
   int entries;
   string id= " ";
 
@@ -320,7 +323,7 @@ void NewEntry(){
   string Industry = " ";
 
   cout << "how many entries do you wish to add?\n"; cin >> entries;
-  
+
   fstream maindata(filename.c_str(), ios::in | ios::out);
   if(maindata.fail()) {cout << "wow what a waste\n";}
 
@@ -330,13 +333,13 @@ void NewEntry(){
            if(Experience != -1) {
 	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
 	      cout << "Please enter ID #:\n"; cin >> id;
-           }//ends if    
+           }//ends if
        }//ends while
 
   cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
         if(Experience < 0) {
-            cout << "OUCH! you can't follow directions can you...that okay we'll make it right for you\n"; 
-            Experience=Experience*(-1);//makes the negative a positive 
+            cout << "OUCH! you can't follow directions can you...that okay we'll make it right for you\n";
+            Experience=Experience*(-1);//makes the negative a positive
         }//ends if
 
   cout <<"Maried? yes or no:\n"; cin >> Married;
@@ -345,10 +348,10 @@ void NewEntry(){
   //THIS FORMAT IS AWFUL AND DOESN'T WORK WITH THE FILE!!
   outfile << id << setw(3) << Experience << setw(11) << Married << setw(7) << Wage << setw(16) << Industry << endl;
   }//ends for loop
-  
+
   maindata.close();
   outfile.close();
-  DATOS += entries; 
+  DATOS += entries;
   system(("cat temp.txt >>"+ filename).c_str());
   system("sort -n -o input.txt input.txt"); //needs to be changed so not hard coded
   system("rm temp.txt");
@@ -366,9 +369,9 @@ void NewDatabase(){
 
   string newdatafile, id;
   int entries;
-        
+
   cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
-  
+
   system(("touch "+ newdatafile).c_str());
   fstream outfile(newdatafile.c_str(), ios::in | ios:: out);
   outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
@@ -380,13 +383,13 @@ void NewDatabase(){
            if(Experience != -1) {
 	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
 	      cout << "Please enter ID #:\n"; cin >> id;
-           }//ends if    
+           }//ends if
        }//ends while
 
   cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
         if(Experience < 0) {
-            cout << "Looks like you entered a negative number...that okay we'll make it right for you\n"; 
-            Experience=Experience*(-1);//makes the negative a positive 
+            cout << "Looks like you entered a negative number...that okay we'll make it right for you\n";
+            Experience=Experience*(-1);//makes the negative a positive
         }//ends if
   cout <<"Maried? yes or no:\n"; cin >> Married;
   cout <<"Enter Wage:\n"; cin >> Wage;
