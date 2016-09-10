@@ -392,7 +392,7 @@ void NewDatabase(){
   cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
+  outfile << id << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
   }//ends for loop
 
   outfile.close();
