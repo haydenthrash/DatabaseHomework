@@ -15,30 +15,23 @@ const string FILENAME = "temp.txt"; //changed, will be used when adding entry to
 const char WHITE_SPACE(32);
 const char NEW_LINE(10);
 
-void NewEntry();
-void NewDatabase();
-fstream OpenDatabase(string filename, bool &isOpened);
-int main();
-
-//starting values for fields in file, taken from sample code given by Dr. Gauch
-string ID = "ID";
-int Experience = -1;
-string Married = "unknown";
-double Wages = -1.0;
-string Industry = "Industry";
-
 int RecordNum = 0;
 int IDColumnLength = 0;
 int ExperienceColumnLength = 0;
 int MarriedColumnLength = 0;
-int WagesColumnLength = 0;
+int WageColumnLength = 0;
 int IndustryColumnLength = 0;
 
+int main();
+void NewEntry();
+
 /*Get record number n-th (from 1 to NUM_RECORDS) */
-bool GetRecord(fstream &Din,  string &Id, int &Experience, string &Married, double &Wage, string &Industry)
+bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
     bool Success = true;
     string line;
+
+
 
     if ((RecordNum >= 1) && (RecordNum <= NUM_RECORDS))
     {
@@ -82,26 +75,37 @@ bool binarySearch (fstream &Din, const string Id, int &Experience, string &Marri
    return Found;
 }
 
-void SearchDatabaseById(fstream &Infile)
+void SearchDatabaseById(fstream &Infile, string ID)
 {
-	if (binarySearch(Infile, ID , Experience, Married, Wages, Industry))
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
+
+	if (binarySearch(Infile, ID , Experience, Married, Wage, Industry))
 	{
-		 cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl;
+		 cout << "Record ID information: " << Experience << ", " << Married << ", " << Wage << ", " << Industry << endl << endl;
 	}
 	else
 		 cout << "Record for ID " << ID << " was not found.\n\n";
 }
 
-void ModifyDatabase(fstream &Infile)
+void ModifyDatabase(fstream &Infile, string ID)
 {
-	// Change so that if modification goes past column length, it chops off the end
-	if (binarySearch(Infile, ID , Experience, Married, Wages, Industry))
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
+	string experienceString = " ";
+	string wageString = " ";
+
+	if (binarySearch(Infile, ID , Experience, Married, Wage, Industry))
 	{
 		int fieldChoice = 0;
 		int updatedLength = 0;
-		stringstream wagesStream;
+		stringstream wageStream;
 
-		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl
+		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wage << ", " << Industry << endl << endl
 				<< "What field would you like to modify?\n"
 				<< "1. Experience\n"
 				<< "2. Married\n"
@@ -115,10 +119,15 @@ void ModifyDatabase(fstream &Infile)
 			case 1:
 				cout << "What integer are you changing Experience to?\n";
 				cin >> Experience;
-				updatedLength = to_string(Experience).length();
+				experienceString = to_string(Experience);
+				updatedLength = experienceString.length();
+				if (updatedLength >= ExperienceColumnLength)
+				{
+					experienceString.resize(ExperienceColumnLength - 1);
+				}
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 				Infile.seekp(IDColumnLength, ios::cur);
-				Infile << Experience;
+				Infile << experienceString;
 				for(int i = 0; i < (ExperienceColumnLength - updatedLength); i++)
 				{
 					Infile << WHITE_SPACE;
@@ -129,6 +138,10 @@ void ModifyDatabase(fstream &Infile)
 				cout << "What are you changing Married to?\n";
 				cin >> Married;
 				updatedLength = Married.length();
+				if (updatedLength >= MarriedColumnLength)
+				{
+					Married.resize(MarriedColumnLength - 1);
+				}
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 				Infile.seekp(IDColumnLength + ExperienceColumnLength, ios::cur);
 				Infile << Married;
@@ -140,14 +153,14 @@ void ModifyDatabase(fstream &Infile)
 
 			case 3:
 				cout << "What float are you changing Wage to?\n";
-				cin >> Wages;
-				wagesStream << fixed << setprecision(9) << Wages;
-				updatedLength = wagesStream.str().length();
+				cin >> Wage;
+				wageStream << fixed << setprecision(9) << Wage;
+				updatedLength = wageStream.str().length();
 				cout << updatedLength << endl;
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);
-				Infile << wagesStream.str();
-				for(int i = 0; i < (WagesColumnLength - updatedLength); i++)
+				Infile << wageStream.str();
+				for(int i = 0; i < (WageColumnLength - updatedLength); i++)
 				{
 					Infile << WHITE_SPACE;
 				}
@@ -157,8 +170,12 @@ void ModifyDatabase(fstream &Infile)
 				cout << "What are you changing Industry to?\n";
 				cin >> Industry;
 				updatedLength = Industry.length();
+				if (updatedLength >= IndustryColumnLength)
+				{
+					Industry.resize(IndustryColumnLength - 2);
+				}
 				Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
-				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WagesColumnLength, ios::cur);
+				Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WageColumnLength, ios::cur);
 				Infile << Industry;
 				for(int i = 0; i < (IndustryColumnLength - updatedLength); i++)
 				{
@@ -178,13 +195,17 @@ void ModifyDatabase(fstream &Infile)
 	}
 }
 
-void DeleteEntry(fstream &Infile)
+void DeleteEntry(fstream &Infile, string ID)
 {
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
 	string confirmDelete = " ";
 
-	if(binarySearch(Infile, ID , Experience, Married, Wages, Industry))
+	if(binarySearch(Infile, ID , Experience, Married, Wage, Industry))
 	{
-		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wages << ", " << Industry << endl << endl
+		cout << "Record ID information: " << Experience << ", " << Married << ", " << Wage << ", " << Industry << endl << endl
 				<< "Are you sure you want to delete record " << ID << "?\n"
 				<< "Y/N\n";
 		cin >> confirmDelete;
@@ -216,32 +237,62 @@ void DeleteEntry(fstream &Infile)
 	}
 }
 
-void Menu(fstream &Infile, string filename, int menuOption){
+void CreateReport(fstream &Infile, string ID)
+{
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
+
+
+	cout << "Id\tExperience\tMarried\tWage\t\tIndustry\n";
+	for(int i = 0; i < 10; i++)
+	{
+		RecordNum = i + 1;
+		if(GetRecord(Infile, ID, Experience, Married, Wage, Industry))
+		{
+			if(to_string(Wage).length() <= 8)
+			{
+				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t\t" << Industry << "\n";
+			}
+			else
+				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t" << Industry << "\n";
+		}
+	}
+}
+
+void Menu(fstream &Infile, int menuOption){
+	string ID = " ";
+
   switch (menuOption)
   {
-  	case 1://Displays an entry based on user choice
+  	case 1:
 	   	 cout <<"Please enter ID number to search for\n";
 	 	   cin >> ID;
-			 SearchDatabaseById(Infile);
+			 SearchDatabaseById(Infile, ID);
 		 break;
 
   	case 2:
       	cout << "Please enter ID number to delete\n";
 				cin >> ID;
-				DeleteEntry(Infile);
+				DeleteEntry(Infile, ID);
       break;
 
-  	case 3://Adds entry to database
+  	case 3:
 				NewEntry();
       break;
 
   	case 4:
       	cout << "Please enter ID number to modify\n";
 				cin >> ID;
-				ModifyDatabase(Infile);
+				ModifyDatabase(Infile, ID);
       break;
 
-  	case 5://return to main where user can quit program of do other stuff
+		case 5:
+			CreateReport(Infile, ID);
+		break;
+
+  	case 6:
 				Infile.close();
 				main();
       break;
@@ -257,6 +308,12 @@ void NewEntry(){//still have to do error checking but we can leave it for the ve
   outfile.open(FILENAME.c_str());
   int entries;
 
+	string ID = " ";
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
+
   outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
@@ -264,10 +321,10 @@ void NewEntry(){//still have to do error checking but we can leave it for the ve
   cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
   cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
   cout <<"Maried? yes or no:\n"; cin >> Married;
-  cout <<"Enter Wage:\n"; cin >> Wages;
+  cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wages << "\t\t" << Industry << endl;
+  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
   }//ends for loop
 
   outfile.close();
@@ -277,6 +334,12 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
 
 	string newdatafile;
 	int entries;
+
+	string ID = " ";
+	int Experience = 0;
+	string Married = " ";
+	double Wage = 0.0;
+	string Industry = " ";
 
 	cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
 	ofstream outfile;
@@ -289,10 +352,10 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
   cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
   cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
   cout <<"Maried? yes or no:\n"; cin >> Married;
-  cout <<"Enter Wage:\n"; cin >> Wages;
+  cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wages << "\t\t" << Industry << endl;
+  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
   }//ends for loop
 
   outfile.close();
@@ -329,12 +392,12 @@ void InitializeColumnLengths(fstream &Infile)
 		Infile.seekg(1, ios::cur);
 	}
 
-	string WagesTitle;
-	Infile >> WagesTitle;
-	WagesColumnLength = WagesTitle.length();
+	string WageTitle;
+	Infile >> WageTitle;
+	WageColumnLength = WageTitle.length();
 	while(Infile.peek() == WHITE_SPACE)
 	{
-		WagesColumnLength++;
+		WageColumnLength++;
 		Infile.seekg(1, ios::cur);
 	}
 
@@ -354,7 +417,7 @@ int main()
     string filename;
     bool shouldContinue = true;
 
-    void Menu(fstream &Ifstream, string filename, int menuOption);
+    void Menu(fstream &Ifstream, int menuOption);
 
     cout <<"HELLO! Please enter the number of your choice\n"
          << "(1) Open Database\n(2) Create New Database\n(3) Quit\n";
@@ -382,16 +445,17 @@ int main()
 				      << "(2) Delete entry\n"
 				      << "(3) Add entry\n"
 				      << "(4) Modify an entry\n"
-				      << "(5) Close Database\n";
+							<< "(5) Create report\n"
+				      << "(6) Close Database\n";
 
 				 cin >> menuOption;
 
-				 if(menuOption == 5)
+				 if(menuOption == 6)
 				 {
 				   shouldContinue = false;
 				 }
 
-				 Menu(Infile, filename, menuOption);
+				 Menu(Infile, menuOption);
 				}
 			}
     }
