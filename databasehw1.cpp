@@ -10,10 +10,13 @@
 using namespace std;
 
 const int RECORD_SIZE = 71;
-const int NUM_RECORDS = 4110;
+//const int NUM_RECORDS = 4110;
 const string FILENAME = "temp.txt"; //changed, will be used when adding entry to temp file so that it can later be merged with orginial database
 const char WHITE_SPACE(32);
 const char NEW_LINE(10);
+
+int DATOS; //used to get # records from a file. This value will then be used to do binary search 
+string filename; //moved it up here to use without having to pass it around to unnecessary methods
 
 int RecordNum = 0;
 int IDColumnLength = 0;
@@ -25,7 +28,7 @@ int IndustryColumnLength = 0;
 int main();
 void NewEntry();
 
-/*Get record number n-th (from 1 to NUM_RECORDS) */
+/*Get record number n-th (from 1 to DATOS) */
 bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
     bool Success = true;
@@ -33,7 +36,7 @@ bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, doubl
 
 
 
-    if ((RecordNum >= 1) && (RecordNum <= NUM_RECORDS))
+    if ((RecordNum >= 1) && (RecordNum <= DATOS))
     {
       Din.seekg(RecordNum * RECORD_SIZE, ios::beg);
       Din >> Id >> Experience >> Married >> Wage >> Industry;
@@ -50,7 +53,7 @@ bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, doubl
 bool binarySearch (fstream &Din, const string Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
    int Low = 0;
-   int High = NUM_RECORDS;
+   int High = DATOS;
    int Middle;
    string MiddleId;
 
@@ -251,10 +254,10 @@ void CreateReport(fstream &Infile, string ID)
 		RecordNum = i + 1;
 		if(GetRecord(Infile, ID, Experience, Married, Wage, Industry))
 		{
-			if(to_string(Wage).length() <= 8)
-			{
+			  if(to_string(Wage).length() <= 8)
+			  {
 				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t\t" << Industry << "\n";
-			}
+			   }
 			else
 				cout << ID << "\t" << Experience << "\t\t" << Married << "\t" << Wage << "\t" << Industry << "\n";
 		}
@@ -303,37 +306,57 @@ void Menu(fstream &Infile, int menuOption){
   }//ends switch
 }//ends Menu function
 
-void NewEntry(){//still have to do error checking but we can leave it for the very end as "touch-ups"
+void NewEntry(){
+
   ofstream outfile;
-  outfile.open(FILENAME.c_str());
+  outfile.open(FILENAME.c_str()); //opens the temp file to add new entries in 
   int entries;
+  string id= " ";
 
-	string ID = " ";
-	int Experience = 0;
-	string Married = " ";
-	double Wage = 0.0;
-	string Industry = " ";
+  string ID = " ";
+  int Experience = 0;
+  string Married = " ";
+  double Wage = 0.0;
+  string Industry = " ";
 
-  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
+  
+  fstream maindata(filename.c_str(), ios::in | ios::out);
+  if(maindata.fail()) {cout << "wow what a waste\n";}
 
-  for (int j=0; j< entries; j++){
-  cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
-  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
+  for (int j=0; j < entries; j++){
+  cout << "Please enter ID #:\n"; cin >> id;
+       while (binarySearch(maindata, id , Experience, Married, Wage, Industry)){
+           if(Experience != -1) {
+	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
+	      cout << "Please enter ID #:\n"; cin >> id;
+           }//ends if    
+       }//ends while
+
+  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
+        if(Experience < 0) {
+            cout << "OUCH! you can't follow directions can you...that okay we'll make it right for you\n"; 
+            Experience=Experience*(-1);//makes the negative a positive 
+        }//ends if
+
   cout <<"Maried? yes or no:\n"; cin >> Married;
   cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
-
-  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
+  //THIS FORMAT IS AWFUL AND DOESN'T WORK WITH THE FILE!!
+  outfile << id << setw(3) << Experience << setw(11) << Married << setw(7) << Wage << setw(16) << Industry << endl;
   }//ends for loop
-
+  
+  maindata.close();
   outfile.close();
+  DATOS += entries; 
+  system(("cat temp.txt >>"+ filename).c_str());
+  system("sort -n -o input.txt input.txt"); //needs to be changed so not hard coded
+  system("rm temp.txt");
+  system(DATOS+"> numero.txt");
+
 }//ends NewEntry
 
-void NewDatabase(){//still have to do error checking but we can leave it for the very end as "touch-ups"
-
-	string newdatafile;
-	int entries;
+void NewDatabase(){
 
 	string ID = " ";
 	int Experience = 0;
@@ -341,16 +364,30 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
 	double Wage = 0.0;
 	string Industry = " ";
 
-	cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
-	ofstream outfile;
-	outfile.open(newdatafile.c_str());
-
+  string newdatafile, id;
+  int entries;
+        
+  cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
+  
+  system(("touch "+ newdatafile).c_str());
+  fstream outfile(newdatafile.c_str(), ios::in | ios:: out);
   outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
   for (int j=0; j< entries; j++){
-  cout << "Please enter ID #:\n"; cin >> ID;//not so sure we should use the global variables but for now I will
-  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0):\n"; cin >> Experience;
+  cout << "Please enter ID #:\n"; cin >> id;
+     while ( binarySearch(outfile, id , Experience, Married, Wage, Industry) ){
+           if(Experience != -1) {
+	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
+	      cout << "Please enter ID #:\n"; cin >> id;
+           }//ends if    
+       }//ends while
+
+  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
+        if(Experience < 0) {
+            cout << "Looks like you entered a negative number...that okay we'll make it right for you\n"; 
+            Experience=Experience*(-1);//makes the negative a positive 
+        }//ends if
   cout <<"Maried? yes or no:\n"; cin >> Married;
   cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
@@ -359,6 +396,12 @@ void NewDatabase(){//still have to do error checking but we can leave it for the
   }//ends for loop
 
   outfile.close();
+
+  system(("wc -l <"+newdatafile+" > numero.txt").c_str()); //read number of lines in the database user created
+  fstream record_num ("numero.txt", ios::in | ios::out);
+  string temp;
+  getline(record_num,temp);
+  DATOS =atoi(temp.c_str());
 
 }//ends NewDatabase
 
@@ -414,7 +457,7 @@ void InitializeColumnLengths(fstream &Infile)
 int main()
 {
     int  openDatabase = 0, menuOption = 0;
-    string filename;
+    string temp_rec_num;
     bool shouldContinue = true;
 
     void Menu(fstream &Ifstream, int menuOption);
@@ -429,6 +472,11 @@ int main()
       cout << "Please enter the name of the database you wish to open\n";
       cin >> filename;
 			fstream Infile(filename.c_str(), ios::in | ios::out);
+                        system(("wc -l <"+filename+" > numero.txt").c_str());//read number of lines in the database user chose to open
+	       	        fstream record_num ("numero.txt", ios::in | ios::out);
+       		        getline(record_num,temp_rec_num);
+		   	DATOS =atoi(temp_rec_num.c_str());
+ cout << "the number of lines in the database are: " << DATOS << endl;
 
 			if(Infile.fail())
 			{
