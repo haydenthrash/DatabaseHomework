@@ -16,7 +16,7 @@ const char WHITE_SPACE(32);
 const char NEW_LINE(10);
 
 int DATOS; //used to get # records from a file. This value will then be used to do binary search
-string filename; //moved it up here to use without having to pass it around to unnecessary methods
+//string filename; //moved it up here to use without having to pass it around to unnecessary methods
 
 int RecordNum = 0;
 int IDColumnLength = 0;
@@ -26,7 +26,7 @@ int WageColumnLength = 0;
 int IndustryColumnLength = 0;
 
 int main();
-void NewEntry();
+void NewEntry(fstream &Infile);
 
 /*Get record number n-th (from 1 to DATOS) */
 bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, double &Wage, string &Industry)
@@ -285,7 +285,7 @@ void Menu(fstream &Infile, int menuOption){
       break;
 
   	case 3:
-				NewEntry();
+				NewEntry(Infile);
       break;
 
   	case 4:
@@ -309,12 +309,9 @@ void Menu(fstream &Infile, int menuOption){
   }//ends switch
 }//ends Menu function
 
-void NewEntry(){
+void NewEntry(fstream &Infile){//unable to search for new ID added
 
-  ofstream outfile;
-  outfile.open(FILENAME.c_str()); //opens the temp file to add new entries in
   int entries;
-  string id= " ";
 
   string ID = " ";
   int Experience = 0;
@@ -324,15 +321,12 @@ void NewEntry(){
 
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
-  fstream maindata(filename.c_str(), ios::in | ios::out);
-  if(maindata.fail()) {cout << "wow what a waste\n";}
-
   for (int j=0; j < entries; j++){
-  cout << "Please enter ID #:\n"; cin >> id;
-       while (binarySearch(maindata, id , Experience, Married, Wage, Industry)){
+  cout << "Please enter ID #:\n"; cin >> ID;
+       while (binarySearch(Infile, ID , Experience, Married, Wage, Industry)){
            if(Experience != -1) {
 	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
-	      cout << "Please enter ID #:\n"; cin >> id;
+	      cout << "Please enter ID #:\n"; cin >> ID;
            }//ends if
        }//ends while
 
@@ -345,21 +339,19 @@ void NewEntry(){
   cout <<"Maried? yes or no:\n"; cin >> Married;
   cout <<"Enter Wage:\n"; cin >> Wage;
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
+
   //THIS FORMAT IS AWFUL AND DOESN'T WORK WITH THE FILE!!
-  outfile << id << setw(3) << Experience << setw(11) << Married << setw(7) << Wage << setw(16) << Industry << endl;
+  Infile << ID << setw(3) << Experience << setw(11) << Married << setw(7) << Wage << setw(16) << Industry << endl;
   }//ends for loop
 
-  maindata.close();
-  outfile.close();
+  //Infile.close();
   DATOS += entries;
-  system(("cat temp.txt >>"+ filename).c_str());
   system("sort -n -o input.txt input.txt"); //needs to be changed so not hard coded
-  system("rm temp.txt");
   system(DATOS+"> numero.txt");
 
 }//ends NewEntry
 
-void NewDatabase(){
+void NewDatabase(){//for some reason doens't write to the outfile after the first "outfile <<" command
 
 	string ID = " ";
 	int Experience = 0;
@@ -367,44 +359,44 @@ void NewDatabase(){
 	double Wage = 0.0;
 	string Industry = " ";
 
-  string newdatafile, id;
+  string newdatafile;
   int entries;
 
   cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
 
-  system(("touch "+ newdatafile).c_str());
-  fstream outfile(newdatafile.c_str(), ios::in | ios:: out);
+  fstream outfile(newdatafile.c_str(), ofstream::out|ofstream::app);
+
   outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
   for (int j=0; j< entries; j++){
-  cout << "Please enter ID #:\n"; cin >> id;
-     while ( binarySearch(outfile, id , Experience, Married, Wage, Industry) ){
+
+     cout << "Please enter ID #:\n"; cin >> ID;
+     while ( binarySearch(outfile, ID , Experience, Married, Wage, Industry) ){
            if(Experience != -1) {
 	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
-	      cout << "Please enter ID #:\n"; cin >> id;
+	      cout << "Please enter ID #:\n"; cin >> ID;
            }//ends if
        }//ends while
 
-  cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
-        if(Experience < 0) {
-            cout << "Looks like you entered a negative number...that okay we'll make it right for you\n";
-            Experience=Experience*(-1);//makes the negative a positive
-        }//ends if
+    cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
+    if(Experience < 0) {
+       cout << "Looks like you entered a negative number...that okay we'll make it right for you\n";
+       Experience=Experience*(-1);//makes the negative a positive
+    }//ends if
+
   cout <<"Maried? yes or no:\n"; cin >> Married;
+
   cout <<"Enter Wage:\n"; cin >> Wage;
+
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << id << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
+  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
   }//ends for loop
 
   outfile.close();
 
-  system(("wc -l <"+newdatafile+" > numero.txt").c_str()); //read number of lines in the database user created
-  fstream record_num ("numero.txt", ios::in | ios::out);
-  string temp;
-  getline(record_num,temp);
-  DATOS =atoi(temp.c_str());
+  DATOS = entries;
 
 }//ends NewDatabase
 
@@ -460,7 +452,7 @@ void InitializeColumnLengths(fstream &Infile)
 int main()
 {
     int  openDatabase = 0, menuOption = 0;
-    string temp_rec_num;
+    string temp_rec_num, filename;
     bool shouldContinue = true;
 
     void Menu(fstream &Ifstream, int menuOption);
@@ -474,7 +466,7 @@ int main()
     {
       cout << "Please enter the name of the database you wish to open\n";
       cin >> filename;
-			fstream Infile(filename.c_str(), ios::in | ios::out);
+			fstream Infile(filename.c_str(), ios::in | ios::out | ios::app);
                         system(("wc -l <"+filename+" > numero.txt").c_str());//read number of lines in the database user chose to open
 	       	        fstream record_num ("numero.txt", ios::in | ios::out);
        		        getline(record_num,temp_rec_num);
