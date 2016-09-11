@@ -341,18 +341,17 @@ ofstream outfile;
 
   cout <<"Maried? yes or no:\n"; cin >> Married; 
 
-  cout <<"Enter Wage:\n"; cin >> Wage; 
-  wages << fixed << setprecision(9)<< Wage; 
+  cout <<"Enter Wage:\n"; cin >> Wage; wages << fixed << setprecision(9)<< Wage; 
 
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry; 
 
   outfile << ID << setw(3) << Experience << setw(12) << Married << setw(16) << wages.str() << setw(6) << Industry << endl;
   }//ends for loop
   
-  outfile.flush();//makes sure all information gets flushed into outfile...nothing stays behind
+outfile.flush();
   DATOS += entries; 
   system(("cat temp.txt >>"+ filename).c_str());
-  system("sort -n -o input.txt input.txt");//needs to be changed so not hard coded
+  system(("sort -n -o"+filename+ " "+filename).c_str());//sort numerically the file that was opened and stores sorted data back to same file
   system("rm temp.txt");
   system(DATOS+"> numero.txt");
 
@@ -368,25 +367,26 @@ void NewDatabase(){
 	string Industry = " ";
 
   string newdatafile;
+  stringstream wages;
   int entries;
 
   cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
 
-  fstream outfile(newdatafile.c_str(), ofstream::out|ofstream::app);
+  ofstream outfile; outfile.open(newdatafile.c_str());
 
-  outfile << "ID" << '\t' << "Experience" << '\t' << "Married" << "\t\t" << "Wage" << "\t\t" << "Industry" << std::endl;
+  outfile << "id" << setw(14) << "experience" << setw(8) << "married" << setw(5) << "wage" << setw(17) << "industry" << endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
   for (int j=0; j< entries; j++){
 
      cout << "Please enter ID #:\n"; cin >> ID;
-     while ( binarySearch(outfile, ID , Experience, Married, Wage, Industry) ){
+  /*   while (  ){
            if(Experience != -1) {
 	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
 	      cout << "Please enter ID #:\n"; cin >> ID;
            }//ends if
        }//ends while
-
+*/
     cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
     if(Experience < 0) {
        cout << "Looks like you entered a negative number...that okay we'll make it right for you\n";
@@ -396,12 +396,15 @@ void NewDatabase(){
   cout <<"Maried? yes or no:\n"; cin >> Married;
 
   cout <<"Enter Wage:\n"; cin >> Wage;
+  wages << fixed << setprecision(9)<< Wage;
 
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << '\t' << Experience << "\t\t" << Married << "\t\t" << Wage << "\t\t" << Industry << endl;
+  outfile << ID << setw(2) << Experience << setw(12) << Married << setw(17) << wages.str() << setw(6) << Industry << std::endl;
+
   }//ends for loop
 
+  outfile.flush();
   outfile.close();
 
   DATOS = entries;
