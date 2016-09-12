@@ -374,44 +374,88 @@ void NewDatabase(){
 	string Industry = " ";
 
   string newdatafile;
-  stringstream wages;
-  int entries;
+  stringstream wages,experienceStream ;
+  int entries, updatedLength;
 
   cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
 
   ofstream outfile; outfile.open(newdatafile.c_str());
 
-  outfile << "id" << setw(14) << "experience" << setw(8) << "married" << setw(5) << "wage" << setw(17) << "industry" << endl;
+ // outfile << "id" << setw(14) << "experience" << setw(8) << "married" << setw(5) << "wage" << setw(17) << "industry" << endl;
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
   for (int j=0; j< entries; j++){
 
-     cout << "Please enter ID #:\n"; cin >> ID;
-  /*   while (  ){
-           if(Experience != -1) {
-	      cout << "it looks like the id you entered is already in use. try again\n\n\n";
-	      cout << "Please enter ID #:\n"; cin >> ID;
-           }//ends if
-       }//ends while
-*/
+     cout << "Please enter ID #:\n"; cin >> ID;//error check ID
+     outfile << ID  << WHITE_SPACE ;
     cout <<"Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:\n"; cin >> Experience;
     if(Experience < 0) {
        cout << "Looks like you entered a negative number...that okay we'll make it right for you\n";
        Experience=Experience*(-1);//makes the negative a positive
     }//ends if
 
+                        experienceStream << Experience;
+			updatedLength = experienceStream.str().length();
+			if (updatedLength >= ExperienceColumnLength)
+			{
+				experienceStream.str().resize(ExperienceColumnLength - 1);
+			}
+			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+			outfile.seekp(IDColumnLength, ios::cur);
+			outfile << experienceStream.str();
+			for(int i = 0; i < (ExperienceColumnLength - updatedLength); i++)
+			{
+				outfile << WHITE_SPACE;
+			}
+
   cout <<"Maried? yes or no:\n"; cin >> Married;
 
+                        updatedLength = Married.length();
+			if (updatedLength >= MarriedColumnLength)
+			{
+				Married.resize(MarriedColumnLength - 1);
+			}
+			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+			outfile.seekp(IDColumnLength + ExperienceColumnLength, ios::cur);
+			outfile << Married;
+			for(int i = 0; i < (MarriedColumnLength - updatedLength); i++)
+			{
+				outfile << WHITE_SPACE;
+			}
+
   cout <<"Enter Wage:\n"; cin >> Wage;
-  wages << fixed << setprecision(9)<< Wage;
+                        wages << fixed << setprecision(9)<< Wage;
+                        updatedLength = wages.str().length();
+			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+			outfile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);
+			outfile << wages.str();
+			for(int i = 0; i < (WageColumnLength - updatedLength); i++)
+			{
+				outfile << WHITE_SPACE;
+			}
+  
 
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
-  outfile << ID << setw(2) << Experience << setw(12) << Married << setw(17) << wages.str() << setw(6) << Industry << std::endl;
+			updatedLength = Industry.length();
+			if (updatedLength >= IndustryColumnLength)
+			{
+				Industry.resize(IndustryColumnLength - 2);
+			}
+			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
+			outfile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WageColumnLength, ios::cur);
+			outfile << Industry;
+			for(int i = 0; i < (IndustryColumnLength - updatedLength); i++)
+			{
+				outfile << WHITE_SPACE;
+			}
+			outfile << NEW_LINE;
+
+  //outfile << ID << setw(2) << Experience << setw(12) << Married << setw(17) << wages.str() << setw(6) << Industry << std::endl;
 
   }//ends for loop
 
-  outfile.flush();
+//  outfile.flush();
   outfile.close();
 
   DATOS = entries;
