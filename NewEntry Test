@@ -1,0 +1,83 @@
+sjbecerr@turing:~/ExtraStuff$ ./databasehw1 
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txt
+the number of lines in the database are: 4112
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+3
+how many entries do you wish to add?
+1
+Please enter ID #:
+09876
+it looks like the id you entered is already in use. try again
+
+
+Please enter ID #:
+00001
+it looks like the id you entered is already in use. try again
+
+
+Please enter ID #:
+09786
+Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:
+12
+Married? yes or no. type out answer in full
+whatever
+Married? yes or no. type out answer in full
+Yes
+Enter Wage:
+6.7
+Enter the Industry he/she works at:
+From_Home
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txt
+the number of lines in the database are: 4113
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+1
+Please enter ID number to search for
+09786
+Record ID information: 12, Yes, 6.7, From_Home
+
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+3
+Bye Now!
