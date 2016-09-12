@@ -23,11 +23,11 @@ const int IDColumnLength = 6;
 const int ExperienceColumnLength = 11;
 const int MarriedColumnLength = 8;
 const int WageColumnLength = 13;
-const int IndustryColumnLength = 31;
+const int IndustryColumnLength = 32;
 
 int main();
 void NewEntry(fstream &Infile);
-
+void FileHeader(ofstream &outfile);
 /*Get record number n-th (from 1 to DATOS) */
 bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
@@ -340,7 +340,7 @@ void NewEntry(fstream &Infile){
 	    Experience=Experience*(-1);//makes the negative a positive
 		}//ends if
 
-		cout <<"Maried? yes or no:\n"; cin >> Married;
+        do {cout << "Married? yes or no. type out answer in full\n"; cin >> Married;}while( (Married != "yes") && (Married != "no") && (Married != "Yes") && (Married != "No") );
 
   	cout <<"Enter Wage:\n"; cin >> Wage;
 		wages << fixed << setprecision(9)<< Wage;
@@ -377,8 +377,7 @@ void NewDatabase(){
   cout <<"Please enter a name for your new database:\n"<<endl; cin >> newdatafile;
 
   ofstream outfile; outfile.open(newdatafile.c_str());
-
- // outfile << "id" << setw(14) << "experience" << setw(8) << "married" << setw(5) << "wage" << setw(17) << "industry" << endl;
+//  FileHeader(outfile); //creates file header
   cout << "how many entries do you wish to add?\n"; cin >> entries;
 
   for (int j=0; j< entries; j++){
@@ -392,7 +391,7 @@ void NewDatabase(){
     }//ends if
 
 			experienceStream.str("");
-      experienceStream << Experience;
+                        experienceStream << Experience;
 			updatedLength = experienceStream.str().length();
 			if (updatedLength >= ExperienceColumnLength)
 			{
@@ -406,8 +405,7 @@ void NewDatabase(){
 				outfile << WHITE_SPACE;
 			}
 
-  cout <<"Maried? yes or no:\n"; cin >> Married;
-
+      do {cout << "Married? yes or no. type out answer in full\n"; cin >> Married;}while( (Married != "yes") && (Married != "no") && (Married != "Yes") && (Married != "No") );
                         updatedLength = Married.length();
 			if (updatedLength >= MarriedColumnLength)
 			{
@@ -422,7 +420,7 @@ void NewDatabase(){
 			}
 
   cout <<"Enter Wage:\n"; cin >> Wage;
-	wages.str("");
+  wages.str("");
                         wages << fixed << setprecision(9)<< Wage;
                         updatedLength = wages.str().length();
 			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
@@ -450,7 +448,6 @@ void NewDatabase(){
 			}
 			outfile << NEW_LINE;
 			RecordNum++;
-  //outfile << ID << setw(2) << Experience << setw(12) << Married << setw(17) << wages.str() << setw(6) << Industry << std::endl;
 
   }//ends for loop
 
@@ -461,6 +458,82 @@ void NewDatabase(){
 
 }//ends NewDatabase
 
+
+void FileHeader(ofstream &outfile){
+stringstream input;
+int updatedLength;
+
+input << "id";
+updatedLength = input.str().length();
+if (updatedLength >= IDColumnLength)
+{
+  input.str().resize(IDColumnLength - 1);
+}
+//outfile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);                    
+outfile << input.str();
+for(int i = 0; i < (IDColumnLength - updatedLength); i++)
+{
+  outfile << WHITE_SPACE;
+}
+
+
+input << "experience";
+updatedLength = input.str().length();
+if (updatedLength >= ExperienceColumnLength)
+{
+  input.str().resize(ExperienceColumnLength - 1);
+}
+outfile.seekp(IDColumnLength, ios::cur);                        
+outfile << input.str();
+for(int i = 0; i < (ExperienceColumnLength - updatedLength); i++)
+{
+  outfile << WHITE_SPACE;
+}
+
+
+input << "married";
+updatedLength = input.str().length();
+if (updatedLength >= MarriedColumnLength)
+{
+  input.str().resize(MarriedColumnLength - 1);
+}
+outfile.seekp(IDColumnLength + ExperienceColumnLength, ios::cur);                       
+outfile << input.str();
+for(int i = 0; i < (MarriedColumnLength - updatedLength); i++)
+{
+  outfile << WHITE_SPACE;
+}
+
+input << "wage";
+updatedLength = input.str().length();
+if (updatedLength >= WageColumnLength)
+{
+  input.str().resize(WageColumnLength - 1);
+}
+outfile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength, ios::cur);                    
+outfile << input.str();
+for(int i = 0; i < (WageColumnLength - updatedLength); i++)
+{
+  outfile << WHITE_SPACE;
+}
+
+
+input << "industry";
+updatedLength = input.str().length();
+if (updatedLength >= IndustryColumnLength)
+{
+  input.str().resize(IndustryColumnLength - 1);
+}
+outfile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WageColumnLength, ios::cur);                    
+outfile << input.str();
+for(int i = 0; i < (IndustryColumnLength - updatedLength); i++)
+{
+  outfile << WHITE_SPACE;
+}
+outfile << NEW_LINE;
+RecordNum ++;
+
+}//ends file header
 int main()
 {
     int  openDatabase = 0, menuOption = 0;
