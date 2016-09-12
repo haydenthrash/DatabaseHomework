@@ -1,0 +1,42 @@
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txt
+the number of lines in the database are: 4111
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+5
+Id	Experience	Married	Wage		Industry
+00001	1		no	1.197540205	Business_and_Repair_Service
+00002	2		no	1.853059995	Personal_Service
+00003	3		no	1.344461678	Business_and_Repair_Service
+00004	4		no	1.433213336	Business_and_Repair_Service
+00005	5		no	1.568125080	Personal_Service
+00006	6		no	1.699890942	Business_and_Repair_Service
+00007	7		no	-0.720262576	Business_and_Repair_Service
+00008	8		no	1.669187917	Business_and_Repair_Service
+00009	4		no	1.675962404	Trade
+00010	5		no	1.518398202	Trade
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+3
+Bye Now!
+Haydens-MacBook-Pro:DatabaseHomework HaydenThrash$ 

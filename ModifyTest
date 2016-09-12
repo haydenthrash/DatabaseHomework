@@ -1,0 +1,125 @@
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txty
+sh: input.txty: No such file or directory
+the number of lines in the database are: 4111
+The file could not be opened
+Haydens-MacBook-Pro:DatabaseHomework HaydenThrash$ ./a.out
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txt
+the number of lines in the database are: 4111
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+2
+Please enter ID number to delete
+0000
+Record for ID 0000 was not found.
+
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+4
+Please enter ID number to modify
+00001
+Record ID information: 1, no, 1.19754, Business_and_Repair_Service
+
+What field would you like to modify?
+1. Experience
+2. Married
+3. Wage
+4. Industry
+1
+What integer are you changing Experience to?
+3
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+4
+Please enter ID number to modify
+00001
+Record ID information: 3, no, 1.19754, Business_and_Repair_Service
+
+What field would you like to modify?
+1. Experience
+2. Married
+3. Wage
+4. Industry
+2
+What are you changing Married to?
+unknown
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+4
+Please enter ID number to modify
+00001
+Record ID information: 3, unknown, 1.19754, Business_and_Repair_Service
+
+What field would you like to modify?
+1. Experience
+2. Married
+3. Wage
+4. Industry
+3
+What float are you changing Wage to?
+1.23456
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+4
+Please enter ID number to modify
+00001
+Record ID information: 3, unknown, 1.23456, Business_and_Repair_Service
+
+What field would you like to modify?
+1. Experience
+2. Married
+3. Wage
+4. Industry
+4
+What are you changing Industry to?
+0123456789012345678901234567890123456789
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+3
+Bye Now!

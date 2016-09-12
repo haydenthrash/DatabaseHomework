@@ -1,0 +1,63 @@
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+input.txt
+the number of lines in the database are: 4111
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+2
+Please enter ID number to delete
+00001
+Record ID information: 2, unknown, 1.23456, 0123456789012345678901234567890
+
+Are you sure you want to delete record 00001?
+Y/N
+Y
+ . . . 
+Okay then, you've deleted it forever
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+1
+Please enter ID number to search for
+00002
+Record ID information: 2, no, 1.85306, Personal_Service
+
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+1
+Please enter ID number to search for
+00001
+Record for ID 00001 was not found.
+
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+3
+Bye Now!

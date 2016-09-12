@@ -23,7 +23,7 @@ const int IDColumnLength = 6;
 const int ExperienceColumnLength = 11;
 const int MarriedColumnLength = 8;
 const int WageColumnLength = 13;
-const int IndustryColumnLength = 32;
+const int IndustryColumnLength = 31;
 
 int main();
 void NewEntry(fstream &Infile);
@@ -33,8 +33,6 @@ bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, doubl
 {
     bool Success = true;
     string line;
-
-
 
     if ((RecordNum >= 1) && (RecordNum <= DATOS))
     {
@@ -52,7 +50,7 @@ bool GetRecord(fstream &Din, string &Id, int &Experience, string &Married, doubl
 /*Binary Search record id */
 bool binarySearch (fstream &Din, const string Id, int &Experience, string &Married, double &Wage, string &Industry)
 {
-   int Low = 0;
+   int Low = 1;
    int High = DATOS;
    int Middle;
    string MiddleId;
@@ -91,7 +89,9 @@ void SearchDatabaseById(fstream &Infile, string ID)
 		 cout << "Record ID information: " << Experience << ", " << Married << ", " << Wage << ", " << Industry << endl << endl;
 	}
 	else
+	{
 		 cout << "Record for ID " << ID << " was not found.\n\n";
+	}
 }
 
 //Modifies fields of a certain record.
@@ -177,7 +177,7 @@ void ModifyDatabase(fstream &Infile, string ID)
 			updatedLength = Industry.length();
 			if (updatedLength >= IndustryColumnLength)
 			{
-				Industry.resize(IndustryColumnLength - 2);
+				Industry.resize(IndustryColumnLength);
 			}
 			Infile.seekp(RecordNum * RECORD_SIZE, ios::beg);
 			Infile.seekp(IDColumnLength + ExperienceColumnLength + MarriedColumnLength + WageColumnLength, ios::cur);
@@ -186,7 +186,6 @@ void ModifyDatabase(fstream &Infile, string ID)
 			{
 				Infile << WHITE_SPACE;
 			}
-			Infile << NEW_LINE;
 		}
 
 		else
@@ -222,8 +221,6 @@ void DeleteEntry(fstream &Infile, string ID)
 			{
 				Infile << WHITE_SPACE;
 			}
-
-			Infile << NEW_LINE;
 
 			cout << "Okay then, you've deleted it forever\n";
 		}
@@ -394,7 +391,8 @@ void NewDatabase(){
        Experience=Experience*(-1);//makes the negative a positive
     }//ends if
 
-                        experienceStream << Experience;
+			experienceStream.str("");
+      experienceStream << Experience;
 			updatedLength = experienceStream.str().length();
 			if (updatedLength >= ExperienceColumnLength)
 			{
@@ -424,6 +422,7 @@ void NewDatabase(){
 			}
 
   cout <<"Enter Wage:\n"; cin >> Wage;
+	wages.str("");
                         wages << fixed << setprecision(9)<< Wage;
                         updatedLength = wages.str().length();
 			outfile.seekp(RecordNum * RECORD_SIZE, ios::beg);
@@ -433,7 +432,7 @@ void NewDatabase(){
 			{
 				outfile << WHITE_SPACE;
 			}
-  
+
 
   cout << "Enter the Industry he/she works at:\n"; cin >> Industry;
 
@@ -450,7 +449,7 @@ void NewDatabase(){
 				outfile << WHITE_SPACE;
 			}
 			outfile << NEW_LINE;
-
+			RecordNum++;
   //outfile << ID << setw(2) << Experience << setw(12) << Married << setw(17) << wages.str() << setw(6) << Industry << std::endl;
 
   }//ends for loop
@@ -461,57 +460,6 @@ void NewDatabase(){
   DATOS = entries;
 
 }//ends NewDatabase
-
-// void InitializeColumnLengths(fstream &Infile)
-// {
-// 	Infile.seekg(0, ios::beg);
-// 	string IDTitle;
-// 	Infile >> IDTitle;
-// 	IDColumnLength = IDTitle.length();
-// 	while(Infile.peek() == WHITE_SPACE)
-// 	{
-// 		IDColumnLength++;
-// 		Infile.seekg(1, ios::cur);
-// 	}
-//
-// 	string ExperienceTitle;
-// 	Infile >> ExperienceTitle;
-// 	ExperienceColumnLength = ExperienceTitle.length();
-// 	while(Infile.peek() == WHITE_SPACE)
-// 	{
-// 		ExperienceColumnLength++;
-// 		Infile.seekg(1, ios::cur);
-// 	}
-//
-// 	string MarriedTitle;
-// 	Infile >> MarriedTitle;
-// 	MarriedColumnLength = MarriedTitle.length();
-// 	while(Infile.peek() == WHITE_SPACE)
-// 	{
-// 		MarriedColumnLength++;
-// 		Infile.seekg(1, ios::cur);
-// 	}
-//
-// 	string WageTitle;
-// 	Infile >> WageTitle;
-// 	WageColumnLength = WageTitle.length();
-// 	while(Infile.peek() == WHITE_SPACE)
-// 	{
-// 		WageColumnLength++;
-// 		Infile.seekg(1, ios::cur);
-// 	}
-//
-// 	string IndustryTitle;
-// 	Infile >> IndustryTitle;
-// 	IndustryColumnLength = IndustryTitle.length();
-// 	while(Infile.peek() == WHITE_SPACE)
-// 	{
-// 		IndustryColumnLength++;
-// 		Infile.seekg(1, ios::cur);
-// 	}
-//
-// 	cout << IDColumnLength << endl << ExperienceColumnLength << endl << MarriedColumnLength << endl << WageColumnLength << endl << IndustryColumnLength << endl;
-// }
 
 int main()
 {
