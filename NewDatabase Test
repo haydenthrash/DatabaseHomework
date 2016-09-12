@@ -1,0 +1,65 @@
+sjbecerr@turing:~/ExtraStuff$ ./databasehw1 
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+2
+Please enter a name for your new database:
+
+Testda.txt
+how many entries do you wish to add?
+2
+Please enter ID #:
+09876
+Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:
+21
+Married? yes or no. type out answer in full
+yes
+Enter Wage:
+6.7
+Enter the Industry he/she works at:
+none
+Please enter ID #:
+12345
+Enter Experience in the form of a whole number (ex: 10 not 10.0) NONNEGATIVES ONLY:
+56
+Married? yes or no. type out answer in full
+no
+Enter Wage:
+7.8
+Enter the Industry he/she works at:
+trade
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+1
+Please enter the name of the database you wish to open
+Testda.txt
+the number of lines in the database are: 2
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+1
+Please enter ID number to search for
+09876
+Record for ID 09876 was not found.
+
+Please enter the number of your choice
+(1) Search database
+(2) Delete entry
+(3) Add entry
+(4) Modify an entry
+(5) Create report
+(6) Close Database
+6
+HELLO! Please enter the number of your choice
+(1) Open Database
+(2) Create New Database
+(3) Quit
+3
+Bye Now!
